@@ -20,6 +20,8 @@ abstract class BaseProvider implements MusicProvider {
   @override
   Map<String, dynamic> get header => Map<String, dynamic>.unmodifiable(_header);
 
+  Map<String, dynamic> get requestHeaders => Map<String, dynamic>.from(_header);
+
   @override
   void setCookie(String cookie) {
     final current = _header['Cookie']?.toString();
