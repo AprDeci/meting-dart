@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:meting_dart/src/providers/base.dart';
+import 'package:meting_dart/src/providers/kugou_provider.dart';
 import 'package:meting_dart/src/providers/netease_provider.dart';
 
 class ProviderFactory {
   static final Map<String, BaseProvider Function(Dio dio)> providers = {
     'netease': (dio) => NeteaseProvider(dio: dio),
+    'kugou': (dio) => KugouProvider(dio: dio),
   };
 
   static BaseProvider create(String platform, Dio dio) {
