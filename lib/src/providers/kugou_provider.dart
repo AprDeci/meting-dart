@@ -160,7 +160,7 @@ class KugouProvider extends BaseProvider {
   @override
   Future<String> pic(String id, {int size = 300}) async {
     final song = await _songRaw(id);
-    final rawUrl = song['imgUrl']?.toString() ?? '';
+    final rawUrl = pickPicUrl(song);
     final url = rawUrl.isEmpty
         ? ''
         : rawUrl.replaceAll('{size}', size.toString());

@@ -14,7 +14,7 @@ Map<String, dynamic> mapSong(dynamic song) {
         parsed.name,
     'artist': artists,
     'album': (data['album_name'] ?? data['albumName'])?.toString() ?? '',
-    'pic_id': (data['imgUrl'] ?? data['image'])?.toString() ?? '',
+    'pic_id': pickPicUrl(data),
     'url_id': (data['hash'] ?? data['encode_album_audio_id'])?.toString() ?? '',
     'lyric_id':
         (data['hash'] ?? data['encode_album_audio_id'])?.toString() ?? '',
@@ -50,6 +50,16 @@ Map<String, dynamic> asMap(dynamic value) {
     return Map<String, dynamic>.from(value);
   }
   return <String, dynamic>{};
+}
+
+String pickPicUrl(Map<String, dynamic> data) {
+  final transParam = asMap(data['trans_param']);
+  return (data['album_img'] ??
+              transParam['union_cover'] ??
+              data['imgUrl'] ??
+              data['image'])
+          ?.toString() ??
+      '';
 }
 
 List<String> _artists(Map<String, dynamic> data, String fallback) {
