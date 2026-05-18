@@ -121,18 +121,26 @@ class NeteaseProvider extends BaseProvider {
 
   @override
   Future<Object?> lyric(String id) async {
-    final response = await _api.eapiPost('/api/song/lyric', {
-      'id': id,
-      'os': 'linux',
-      'lv': -1,
-      'kv': -1,
-      'tv': -1,
-    });
+    final response = await _newLyric(id);
     final mapped = mapLyric(response);
     if (!isFormat) {
       return mapped;
     }
     return encodeMetingObject(mapped);
+  }
+
+  Future<Map<String, dynamic>> _newLyric(String id) {
+    return _api.eapiPost('/api/song/lyric/v1', {
+      'id': id,
+      'cp': false,
+      'tv': 0,
+      'lv': 0,
+      'rv': 0,
+      'kv': 0,
+      'yv': 0,
+      'ytv': 0,
+      'yrv': 0,
+    });
   }
 
   @override

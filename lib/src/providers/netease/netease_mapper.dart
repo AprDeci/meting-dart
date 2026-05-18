@@ -48,6 +48,9 @@ Map<String, dynamic> mapLyric(Map<String, dynamic> data) {
   return {
     'lyric': _asMap(data['lrc'])['lyric']?.toString() ?? '',
     'tlyric': _asMap(data['tlyric'])['lyric']?.toString() ?? '',
+    'rlyric': _asMap(data['romalrc'])['lyric']?.toString() ?? '',
+    'klyric': _asMap(data['yrc'])['lyric']?.toString() ?? '',
+    'ktlyric': _asMap(data['ytlrc'])['lyric']?.toString() ?? '',
   };
 }
 
