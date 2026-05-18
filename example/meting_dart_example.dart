@@ -29,16 +29,16 @@ Future<void> kugouExample() async {
   print(
     "-------------------------------Kugou Example----------------------------------",
   );
-  final result = await meting.search('Love Like This', option: {'limit': 3});
+  final result = await meting.search('稻香-周杰伦', option: {'limit': 3});
   print(result);
   print("-----------------");
-  final song = await meting.song('ec8eb73e83c6e2a2b58b55a3a21c1296');
+  final song = await meting.song('8909e1809908cd8e3bf6cf85d98b93f0');
   print(song);
   print("-----------------");
-  final lyric = await meting.lyric('ec8eb73e83c6e2a2b58b55a3a21c1296');
+  final lyric = await meting.lyric('8909e1809908cd8e3bf6cf85d98b93f0');
   print(lyric);
   print("-----------------");
-  final picture = await meting.pic('ec8eb73e83c6e2a2b58b55a3a21c1296');
+  final picture = await meting.pic('8909e1809908cd8e3bf6cf85d98b93f0');
   print(picture);
   print("-----------------");
 }
