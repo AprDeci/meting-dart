@@ -1,7 +1,7 @@
 import 'package:meting_dart/meting_dart.dart';
 
 void main() async {
-  await neteaseExample();
+  //await neteaseExample();
   await kugouExample();
 }
 
@@ -19,7 +19,7 @@ Future<void> neteaseExample() async {
   final picture = await meting.pic('109951170473693123');
   print(picture);
   print("-----------------");
-  final lyric = await meting.lyric('2731571357');
+  final lyric = await meting.lyric('1824020871');
   print(lyric);
   print("-----------------");
 }
