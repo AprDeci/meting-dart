@@ -22,7 +22,13 @@ Map<String, dynamic> mapSong(dynamic song) {
   };
 }
 
-Map<String, dynamic> mapLyric(String lyric) => {'lyric': lyric, 'tlyric': ''};
+Map<String, dynamic> mapLyric(String lyric, {String klyric = ''}) => {
+  'lyric': lyric,
+  'tlyric': '',
+  'rlyric': '',
+  'klyric': klyric,
+  'ktlyric': '',
+};
 
 String encodeMetingList(Iterable<dynamic> songs) {
   return jsonEncode(songs.map(mapSong).toList());

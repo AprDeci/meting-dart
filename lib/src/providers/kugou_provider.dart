@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:meting_dart/src/providers/base.dart';
 import 'package:meting_dart/src/providers/kugou/kugou_api.dart';
+import 'package:meting_dart/src/providers/kugou/kugou_lyric_decoder.dart';
 import 'package:meting_dart/src/providers/kugou/kugou_mapper.dart';
 
 class KugouProvider extends BaseProvider {
@@ -131,30 +130,26 @@ class KugouProvider extends BaseProvider {
     if (candidates.isEmpty) {
       return _lyricResult('');
     }
-    final first = asMap(candidates.first);
-    final accessKey = first['accesskey']?.toString() ?? '';
-    final lyricId = first['id']?.toString() ?? '';
+    final candidate = asMap(candidates.first);
+    final accessKey = candidate['accesskey']?.toString() ?? '';
+    final lyricId = candidate['id']?.toString() ?? '';
+
     if (accessKey.isEmpty || lyricId.isEmpty) {
       return _lyricResult('');
     }
 
-    final download = await _api.get(
-      'http://lyrics.kugou.com/download',
-      query: {
-        'charset': 'utf8',
-        'accesskey': accessKey,
-        'id': lyricId,
-        'client': 'mobi',
-        'fmt': 'lrc',
-        'ver': 1,
-      },
+    final lrcDownload = await _downloadLyric(
+      accessKey: accessKey,
+      lyricId: lyricId,
+      fmt: 'lrc',
     );
-    final content = download['content']?.toString() ?? '';
-    if (content.isEmpty) {
+    final lyric = _decodeDownload(lrcDownload, fmt: 'lrc');
+    if (lyric.isEmpty) {
       return _lyricResult('');
     }
-    final lyric = utf8.decode(base64Decode(content));
-    return _lyricResult(lyric);
+
+    final klyric = await _downloadKrc(accessKey: accessKey, lyricId: lyricId);
+    return _lyricResult(lyric, klyric: klyric);
   }
 
   @override
@@ -177,8 +172,61 @@ class KugouProvider extends BaseProvider {
     );
   }
 
-  Object _lyricResult(String lyric) {
-    final mapped = mapLyric(lyric);
+  Future<Map<String, dynamic>> _downloadLyric({
+    required String accessKey,
+    required String lyricId,
+    required String fmt,
+  }) {
+    return _api.get(
+      'http://lyrics.kugou.com/download',
+      query: {
+        'charset': 'utf8',
+        'accesskey': accessKey,
+        'id': lyricId,
+        'client': 'android',
+        'fmt': fmt,
+        'ver': 1,
+      },
+    );
+  }
+
+  Future<String> _downloadKrc({
+    required String accessKey,
+    required String lyricId,
+  }) async {
+    try {
+      final download = await _downloadLyric(
+        accessKey: accessKey,
+        lyricId: lyricId,
+        fmt: 'krc',
+      );
+      return _decodeDownload(download, fmt: 'krc');
+    } catch (_) {
+      return '';
+    }
+  }
+
+  String _decodeDownload(Map<String, dynamic> download, {required String fmt}) {
+    final content = download['content']?.toString() ?? '';
+    if (content.isEmpty) {
+      return '';
+    }
+
+    try {
+      final contentType = int.tryParse(
+        download['contenttype']?.toString() ?? '',
+      );
+      if (fmt == 'lrc' || contentType != 0) {
+        return decodeLrcContent(content);
+      }
+      return decodeKrcContent(content);
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Object _lyricResult(String lyric, {String klyric = ''}) {
+    final mapped = mapLyric(lyric, klyric: klyric);
     if (!isFormat) {
       return mapped;
     }
