@@ -46,12 +46,36 @@ Map<String, dynamic> mapUrl(dynamic item) {
 
 Map<String, dynamic> mapLyric(Map<String, dynamic> data) {
   return {
-    'lyric': _asMap(data['lrc'])['lyric']?.toString() ?? '',
-    'tlyric': _asMap(data['tlyric'])['lyric']?.toString() ?? '',
-    'rlyric': _asMap(data['romalrc'])['lyric']?.toString() ?? '',
-    'klyric': _asMap(data['yrc'])['lyric']?.toString() ?? '',
-    'ktlyric': _asMap(data['ytlrc'])['lyric']?.toString() ?? '',
+    'lyric': _cleanLyric(_asMap(data['lrc'])['lyric']),
+    'tlyric': _cleanLyric(_asMap(data['tlyric'])['lyric']),
+    'rlyric': _cleanLyric(_asMap(data['romalrc'])['lyric']),
+    'klyric': _cleanLyric(_asMap(data['yrc'])['lyric']),
+    'ktlyric': _cleanLyric(_asMap(data['ytlrc'])['lyric']),
   };
+}
+
+String _cleanLyric(dynamic value) {
+  final lyric = value?.toString() ?? '';
+  if (lyric.isEmpty) {
+    return '';
+  }
+
+  final lines = lyric.split('\n').where((line) => !_isJsonLyricMeta(line));
+  return lines.join('\n');
+}
+
+bool _isJsonLyricMeta(String line) {
+  final text = line.trim();
+  if (!text.startsWith('{') || !text.endsWith('}')) {
+    return false;
+  }
+
+  try {
+    final data = jsonDecode(text);
+    return data is Map && data.containsKey('t') && data.containsKey('c');
+  } on FormatException {
+    return false;
+  }
 }
 
 String encodeMetingList(Iterable<dynamic> songs) {
