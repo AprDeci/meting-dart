@@ -25,6 +25,7 @@ Map<String, dynamic> mapSong(dynamic song) {
     'name': data['name']?.toString() ?? '',
     'artist': artistNames,
     'album': album['name']?.toString() ?? '',
+    'duration': data['dt'],
     'pic_id': picId,
     'url_id': data['id']?.toString() ?? '',
     'lyric_id': data['id']?.toString() ?? '',
